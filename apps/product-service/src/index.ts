@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 
 const app = express();
@@ -9,6 +9,21 @@ app.use(
         credentials: true,
     })
 )
+
+app.get("/", (req: Request, res: Response) => {
+    res.send("Products endpoint works");
+});
+
+app.get("/health", (req: Request, res: Response) => {
+    res.json({
+        status: "healthy",
+        uptime: process.uptime(),
+        timeStamp: Date.now(),
+        message: "Products service is running",
+    });
+});
+
+
 
 app.listen(8000, () => {
     console.log("Product service is running on port 8000");

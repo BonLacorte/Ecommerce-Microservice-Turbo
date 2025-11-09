@@ -2,6 +2,19 @@ import Fastify from "fastify";
 
 const fastify = Fastify();
 
+fastify.get("/", (request, res) => {
+    res.send("Orders endpoint works");
+});
+
+fastify.get("/health", (request, reply) => {
+    return reply.status(200).send({
+        status: "healthy",
+        uptime: process.uptime(),
+        timeStamp: Date.now(),
+        message: "Orders service is running",
+    });
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 8001 })
@@ -12,3 +25,4 @@ const start = async () => {
         process.exit(1);
     }
 }
+start()
