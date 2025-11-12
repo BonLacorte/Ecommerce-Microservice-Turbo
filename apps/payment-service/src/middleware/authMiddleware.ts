@@ -8,7 +8,7 @@ export const shouldBeUser = createMiddleware<{ Variables: { userId: string } }>(
         return c.json({ message: "Payment service is not authenticated" })
     }
 
-    c.set('userId', auth.userId)
+    c.set('userId', auth.userId) 
 
     await next()
 })
