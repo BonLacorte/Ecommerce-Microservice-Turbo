@@ -1,7 +1,10 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { clerkMiddleware, getAuth } from "@clerk/express";
-import { shouldBeUser } from "../middleware/authMiddleware.js";
+// import { shouldBeUser } from "./middleware/authMiddleware";
+import productRouter from "./routes/product.route";
+import categoryRouter from "./routes/category.route";
+
 
 const app = express();
 
@@ -12,6 +15,7 @@ app.use(
     })
 )
 
+app.use(express.json());
 app.use(clerkMiddleware());
 
 app.get("/", (req: Request, res: Response) => {
@@ -27,16 +31,21 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
-app.get("/test", shouldBeUser, (req: Request, res: Response) => {
-    const auth = getAuth(req);
-    const userId = auth.userId;
+app.get("/test", (req: Request, res: Response) => {
+    // const auth = getAuth(req);
+    // const userId = auth.userId;
 
-    if (!userId) {
-        return res.status(401).json({ message: "Product service is not authenticated" });
-    }
+    // if (!userId) {
+    //     return res.status(401).json({ message: "Product service is not authenticated" });
+    // }
     
-    res.json({message: "Product service is authenticated", userId: userId});
+    // res.json({message: "Product service is authenticated", userId: userId});
+    // res.json({message: "Product service is authenticated", userId: req.userId});
+    res.json({message: "Product service is authenticated"});
 })
+
+app.use("/products", productRouter);
+app.use("/categories", categoryRouter);
 
 app.listen(8000, () => {
     console.log("Product service is running on port 8000");
