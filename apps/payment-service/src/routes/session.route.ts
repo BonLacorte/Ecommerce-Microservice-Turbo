@@ -62,7 +62,7 @@ sessionRoute.get("/:session_id", async (c) => {
     }
   );
 
-  // console.log(session);
+  console.log(session);
 
   return c.json({
     status: session.status,
