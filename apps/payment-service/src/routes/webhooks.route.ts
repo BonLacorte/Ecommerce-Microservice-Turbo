@@ -35,10 +35,10 @@ webhookRoute.post("/stripe", async (c) => {
             )
 
             // TODO: CREATE ORDER
-            console.log("WEBHOOK RECEIVED:", session);
+            // console.log("WEBHOOK RECEIVED:", session);
             break;
         default:
-            console.log(`Unhandled event type ${event.type}`);
+            // console.log(`Unhandled event type ${event.type}`);
             break;
     }
     return c.json({ received: true });

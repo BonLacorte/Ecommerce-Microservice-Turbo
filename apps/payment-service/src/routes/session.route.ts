@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import stripe from "../utils/stripe";
 import { shouldBeUser } from '../middleware/authMiddleware';
 import { CartItemType } from '@repo/types';
-import { getStripeProductPrice } from '../utils/stripeProducts';
+import { getStripeProductPrice } from '../utils/stripeProduct';
 
 const sessionRoute = new Hono();
 
