@@ -23,6 +23,8 @@ export const createProduct = async (req: Request, res: Response) => {
       .json({ message: "Missing images for colors!", missingColors });
   }
 
+  console.log("data", data);
+
   const product = await prisma.product.create({ data });
 
   const stripeProduct: StripeProductType = {

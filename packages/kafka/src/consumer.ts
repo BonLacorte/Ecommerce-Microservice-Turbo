@@ -9,31 +9,44 @@ export const createConsumer = (kafka: Kafka, groupId: string) => {
     };
 
     const subscribe = async (
-        topics: {
-        topicName: string;
-        topicHandler: (message: any) => Promise<void>;
-        }[]
+        // topics: {
+        // topicName: string;
+        // topicHandler: (message: any) => Promise<void>;
+        // }[]
+        topic: string,
+        handler: (message: any) => Promise<void>
     ) => {
+        // await consumer.subscribe({
+        // topics: [topic],
+        // fromBeginning: true,
+        // });
+
         await consumer.subscribe({
-        topics: topics.map((topic) => topic.topicName),
-        fromBeginning: true,
+            topic: topic,
+            fromBeginning: true,
         });
 
         await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            try {
-            const topicConfig = topics.find((t) => t.topicName === topic);
-            if (topicConfig) {
-                const value = message.value?.toString();
+            eachMessage: async ({ topic, partition, message }) => {
+                try {
+                    // const topicConfig = topics.find((t) => t.topicName === topic);
+                    // if (topicConfig) {
+                    //     const value = message.value?.toString();
 
-                if (value) {
-                await topicConfig.topicHandler(JSON.parse(value));
+                    //     if (value) {
+                    //     await topicConfig.topicHandler(JSON.parse(value));
+                    //     }
+                    // }
+
+                    const value = message.value?.toString();
+                    
+                    if (value) {
+                        await handler(JSON.parse(value));
+                    }
+                } catch (error) {
+                console.log("Error processing message", error);
                 }
-            }
-            } catch (error) {
-            console.log("Error processing message", error);
-            }
-        },
+            },
         });
     };
 

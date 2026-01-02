@@ -38,9 +38,9 @@ sessionRoute.post('/create-checkout-session', shouldBeUser, async (c) => {
       return_url: 'http://localhost:3002/return?session_id={CHECKOUT_SESSION_ID}'
     });
 
-    console.log("testing");
+    // console.log("testing");
 
-    console.log("session:", session);
+    // console.log("session:", session);
 
     // console.log("session: ", session);
 
