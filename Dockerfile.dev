@@ -1,0 +1,24 @@
+FROM node:18-alpine
+
+# Install required dependencies for Prisma and native extensions
+RUN apk add --no-cache libc6-compat openssl
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the entire workspace
+COPY . .
+
+# Install dependencies
+RUN pnpm install
+
+# Expose all the ports used by the microservices
+EXPOSE 3002 3003 8000 8001 8002 8003
+
+# Generate Prisma client, deploy migrations, and start all services
+CMD pnpm --filter @repo/product-db run db:generate && \
+    pnpm --filter @repo/product-db exec npx prisma migrate deploy && \
+    pnpm dev

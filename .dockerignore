@@ -1,0 +1,10 @@
+node_modules
+.git
+.turbo
+.next
+*.log
+stripe-cli
+.env
+.env.local
+apps/*/.env
+apps/*/.env.local
