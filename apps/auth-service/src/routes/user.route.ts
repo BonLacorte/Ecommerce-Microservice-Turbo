@@ -6,6 +6,7 @@ const router: Router = Router();
 
 router.get("/", async (req, res) => {
     const users = await clerkClient.users.getUserList();
+    console.log("Clerk Users List:", users);
     res.status(200).json(users);
 });
 

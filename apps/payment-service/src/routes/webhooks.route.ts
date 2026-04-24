@@ -35,9 +35,11 @@ webhookRoute.post("/stripe", async (c) => {
       const lineItems = await stripe.checkout.sessions.listLineItems(
         session.id
       );
-      // TODO: CREATE ORDER
-      // console.log("WEBHOOK RECEIVED", session);
-      producer.send("payment.successful", {
+
+      console.log('--- STRIPE WEBHOOK RECEIVED ---');
+      console.log('Session ID:', session.id);
+      
+      await producer.send("payment.successful", {
         value: {
           userId: session.client_reference_id,
           email: session.customer_details?.email,
@@ -51,7 +53,7 @@ webhookRoute.post("/stripe", async (c) => {
         },
       });
 
-      console.log('Webhook received');
+      console.log('Payment success event sent to Kafka for user:', session.client_reference_id);
 
       break;
 

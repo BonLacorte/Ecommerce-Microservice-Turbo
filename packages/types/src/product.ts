@@ -23,6 +23,10 @@ export const colors = [
   "gray",
   "black",
   "white",
+  "navy",
+  "tan",
+  "silver",
+  "gold",
 ] as const;
 
 export const sizes = [
@@ -47,6 +51,7 @@ export const sizes = [
   "46",
   "47",
   "48",
+  "one-size",
 ] as const;
 
 export const ProductFormSchema = z

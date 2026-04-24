@@ -123,19 +123,39 @@ import { auth } from "@clerk/nextjs/server";
 // ];
 
 const CardList = async ({ title }: { title: string }) => {
-  let products: ProductsType = [];
+  let products: any[] = [];
   let orders: OrderType[] = [];
 
   const { getToken } = await auth();
   const token = await getToken();
 
   if (title === "Popular Products") {
-    products = await fetch(
-      `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/products?limit=3&popular=true`
+    const popularData: { name: string; count: number }[] = await fetch(
+      `${process.env.NEXT_PUBLIC_ORDER_SERVICE_URL}/api/popular-products`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     ).then((res) => res.json());
+
+    const popularNames = popularData.map((p) => p.name);
+
+    const allProducts: ProductsType = await fetch(
+      `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/api/products`
+    ).then((res) => res.json());
+
+    products = allProducts
+      .filter((p) => popularNames.includes(p.name))
+      .sort((a, b) => popularNames.indexOf(a.name) - popularNames.indexOf(b.name))
+      .slice(0, 3)
+      .map((p) => {
+        const pd = popularData.find((d) => d.name === p.name);
+        return { ...p, count: pd ? pd.count : 0 };
+      });
   } else {
     orders = await fetch(
-      `${process.env.NEXT_PUBLIC_ORDER_SERVICE_URL}/orders?limit=3`,
+      `${process.env.NEXT_PUBLIC_ORDER_SERVICE_URL}/api/orders?limit=3`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -170,7 +190,7 @@ const CardList = async ({ title }: { title: string }) => {
                     {item.name}
                   </CardTitle>
                 </CardContent>
-                <CardFooter className="p-0">${item.price}K</CardFooter>
+                <CardFooter className="p-0 text-muted-foreground">{item.count} sold</CardFooter>
               </Card>
             ))
           : orders.map((item) => (

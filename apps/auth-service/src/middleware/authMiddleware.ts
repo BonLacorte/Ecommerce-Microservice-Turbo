@@ -35,6 +35,9 @@ export const shouldBeAdmin = (
     const auth = getAuth(req);
     const userId = auth.userId;
 
+    console.log("Auth Middleware - userId:", userId);
+    console.log("Auth Middleware - sessionClaims:", auth.sessionClaims);
+
     if (!userId) {
         return res.status(401).json({ message: "You are not logged in!" });
     }
@@ -42,6 +45,7 @@ export const shouldBeAdmin = (
     const claims = auth.sessionClaims as CustomJwtSessionClaims;
 
     if (claims.metadata?.role !== "admin") {
+        console.log("Auth Middleware - Access denied for role:", claims.metadata?.role);
         return res.status(403).send({ message: "Unauthorized!" });
     }
 

@@ -45,8 +45,8 @@ app.get("/test", (req: Request, res: Response) => {
     res.json({message: "Product service is authenticated"});
 })
 
-app.use("/products", productRouter);
-app.use("/categories", categoryRouter);
+app.use("/api/products", productRouter);
+app.use("/api/categories", categoryRouter);
 
 const start = async () => {
     try {

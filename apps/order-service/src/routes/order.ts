@@ -107,4 +107,22 @@ export const orderRoute = async (fastify: FastifyInstance) => {
       return reply.send(results);
     }
   );
+  fastify.get(
+    "/popular-products",
+    { preHandler: shouldBeAdmin },
+    async (request, reply) => {
+      const popular = await Order.aggregate([
+        { $unwind: "$products" },
+        {
+          $group: {
+            _id: "$products.name",
+            totalQuantity: { $sum: "$products.quantity" },
+          },
+        },
+        { $sort: { totalQuantity: -1 } },
+        { $limit: 3 },
+      ]);
+      return reply.send(popular.map((p) => ({ name: p._id, count: p.totalQuantity })));
+    }
+  );
 };

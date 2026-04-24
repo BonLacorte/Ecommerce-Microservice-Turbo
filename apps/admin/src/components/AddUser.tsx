@@ -50,7 +50,7 @@ const AddUser = () => {
     mutationFn: async (data: z.infer<typeof UserFormSchema>) => {
       const token = await getToken();
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/users`,
+        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/api/users`,
         {
           method: "POST",
           body: JSON.stringify(data),

@@ -47,7 +47,7 @@ import { useAuth } from "@clerk/nextjs";
 
 const fetchCategories = async () => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/categories`
+    `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/api/categories`
   );
 
   if (!res.ok) {
@@ -83,7 +83,7 @@ const AddProduct = () => {
     mutationFn: async (data: z.infer<typeof ProductFormSchema>) => {
       const token = await getToken();
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/products`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/api/products`,
         {
           method: "POST",
           body: JSON.stringify(data),

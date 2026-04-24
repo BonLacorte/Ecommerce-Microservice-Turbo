@@ -31,17 +31,22 @@ fastify.get("/test", { preHandler: shouldBeUser }, (request, reply) => {
     return reply.status(200).send({message: "Order service is authenticated", userId});
 })
 
-fastify.register(orderRoute);
+fastify.register(orderRoute, { prefix: "/api" });
 
 const start = async () => {
     try {
-        Promise.all([
-            await connectOrderDB(),
-            await producer.connect(),
-            await consumer.connect(),
-        ]);
+        console.log("Connecting to Order DB...");
+        await connectOrderDB();
+        console.log("Connecting to Kafka Producer...");
+        await producer.connect();
+        console.log("Connecting to Kafka Consumer...");
+        await consumer.connect();
+        
+        console.log("Running Kafka Subscriptions...");
         await runKafkaSubscriptions();
-        await fastify.listen({ port: 8001 });
+        
+        console.log("Starting Fastify server...");
+        await fastify.listen({ port: 8001, host: '0.0.0.0' });
         console.log("Order service is running on port 8001");
     } catch (err) {
         console.log(err);

@@ -1,35 +1,32 @@
-'use client'
+"use client";
 
 import { useAuth } from '@clerk/nextjs';
-import { CheckoutProvider } from '@stripe/react-stripe-js';
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 import { useEffect, useState } from "react";
 import { CartItemsType, ShippingFormInputs } from "@repo/types";
-import CheckoutForm from "./CheckoutForm";
 import useCartStore from "@/stores/cartStore";
 
-// const stripe = loadStripe("pk_test_51SbchuQbmZcBa2zNyqf6ZI7GEMkSJ82KvpPMdpgz1u8lnz0Fez3Npl58cmmx0mZ4PHo9c3AeE7lGug5fgbWdhs6t00zMd5fpF2");
-
 const stripePromise = loadStripe(
-  "pk_test_51SbchfHe2WNNGOd950qplQbthFZFleKicj1VyVKGPp0IbTceocNAHAf58pKULgoNRQqBFdWjIZMArsZFnA3ZbEJT00ilMRgSJf"
-); // Renamed for clarity
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 const fetchClientSecret = async (cart: CartItemsType, token: string) => {
-  return fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/sessions/create-checkout-session`,
     {
       method: "POST",
-      body: JSON.stringify({
-        cart,
-      }),
+      body: JSON.stringify({ cart }),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     }
-  )
-    .then((response) => response.json())
-    .then((json) => json.checkoutSessionClientSecret);
+  );
+  
+  if (!response.ok) throw new Error("Failed to create session");
+  const json = await response.json();
+  return json.clientSecret; // We'll update the server to return this name
 };
 
 const StripePaymentForm = ({
@@ -42,21 +39,19 @@ const StripePaymentForm = ({
   const { getToken } = useAuth();
 
   useEffect(() => {
-    getToken().then((token) => setToken(token));
+    getToken().then(setToken);
   }, []);
 
-  if (!token) {
-    return <div className="">Loading...</div>;
-  }
+  if (!token) return <div className="p-8 text-center">Authenticating...</div>;
+
+  const options = { fetchClientSecret: () => fetchClientSecret(cart, token) };
 
   return (
-    <CheckoutProvider
-      // Pass the promise directly
-      stripe={stripePromise} 
-      options={{ fetchClientSecret: () => fetchClientSecret(cart, token!) }}
-    >
-      <CheckoutForm shippingForm={shippingForm} />
-    </CheckoutProvider>
+    <div id="checkout" className="min-h-[600px]">
+      <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
+    </div>
   );
 };
 

@@ -23,7 +23,7 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
-app.use("/users", shouldBeAdmin, userRoute);
+app.use("/api/users", shouldBeAdmin, userRoute);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.log(err);

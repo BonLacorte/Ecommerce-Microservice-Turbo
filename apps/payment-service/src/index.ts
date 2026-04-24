@@ -33,6 +33,7 @@ const start = async () => {
       },
       (info) => {
         console.log(`Payment service is running on port 8002`);
+        // Force reload confirm
       }
     );
   } catch (error) {
